@@ -185,11 +185,15 @@ function Footer({ setPage }: { setPage: (p: Page) => void }) {
               Deep-tech startup building AI-powered satellite intelligence and 2D-to-3D spatial reconstruction systems.
             </p>
             <div className="flex gap-4 mt-6">
-              {[Linkedin, Twitter, Github].map((Icon, i) => (
-                <a key={i} href="#" className="w-9 h-9 rounded-full border border-[#E8B800]/20 flex items-center justify-center text-[#E8B800]/60 hover:text-[#E8B800] hover:border-[#E8B800]/60 hover:shadow-[0_0_12px_rgba(232,184,0,0.3)] transition-all cursor-pointer">
-                  <Icon className="w-4 h-4" />
-                </a>
-              ))}
+              <a href="https://www.linkedin.com/company/skyvonyx" target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-full border border-[#E8B800]/20 flex items-center justify-center text-[#E8B800]/60 hover:text-[#E8B800] hover:border-[#E8B800]/60 hover:shadow-[0_0_12px_rgba(232,184,0,0.3)] transition-all cursor-pointer">
+                <Linkedin className="w-4 h-4" />
+              </a>
+              <a href="https://twitter.com/skyvonyx" target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-full border border-[#E8B800]/20 flex items-center justify-center text-[#E8B800]/60 hover:text-[#E8B800] hover:border-[#E8B800]/60 hover:shadow-[0_0_12px_rgba(232,184,0,0.3)] transition-all cursor-pointer">
+                <Twitter className="w-4 h-4" />
+              </a>
+              <a href="https://github.com/skyvonyx" target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-full border border-[#E8B800]/20 flex items-center justify-center text-[#E8B800]/60 hover:text-[#E8B800] hover:border-[#E8B800]/60 hover:shadow-[0_0_12px_rgba(232,184,0,0.3)] transition-all cursor-pointer">
+                <Github className="w-4 h-4" />
+              </a>
             </div>
           </div>
           <div>
@@ -205,7 +209,10 @@ function Footer({ setPage }: { setPage: (p: Page) => void }) {
           <div>
             <p className="text-[#E8B800] text-xs tracking-widest uppercase font-semibold mb-4" style={{ fontFamily: "JetBrains Mono, monospace" }}>Contact</p>
             <div className="space-y-3 text-sm text-white/50" style={{ fontFamily: "Inter, sans-serif" }}>
-              <div className="flex items-center gap-2"><Mail className="w-4 h-4 text-[#E8B800]/60" /><span>skyvonyx@gmail.com</span></div>
+              <div className="flex items-center gap-2">
+                <Mail className="w-4 h-4 text-[#E8B800]/60" />
+                <a href="https://mail.google.com/mail/?view=cm&fs=1&to=skyvonyx@gmail.com" target="_blank" rel="noopener noreferrer" className="hover:text-[#E8B800] transition-colors cursor-pointer">skyvonyx@gmail.com</a>
+              </div>
               {/* <div className="flex items-center gap-2"><Mail className="w-4 h-4 text-[#E8B800]/60" /><span>ganesh@skyvonyx.com</span></div> */}
               <div className="flex items-center gap-2"><MapPin className="w-4 h-4 text-[#E8B800]/60" /><span>Global — Remote First</span></div>
             </div>
@@ -425,10 +432,10 @@ function HomePage({ setPage }: { setPage: (p: Page) => void }) {
                 </div>
                 <p className="text-white/55 text-sm leading-relaxed mb-5" style={{ fontFamily: "Inter, sans-serif" }}>"{f.bio}"</p>
                 <div className="flex gap-3 border-t border-white/5 pt-5">
-                  <a href={`https://${f.linkedin}`} className="flex items-center gap-1.5 text-xs text-white/40 hover:text-[#E8B800] transition-colors cursor-pointer" style={{ fontFamily: "JetBrains Mono, monospace" }}>
+                  <a href={f.linkedin.startsWith('http') ? f.linkedin : `https://${f.linkedin}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 text-xs text-white/40 hover:text-[#E8B800] transition-colors cursor-pointer" style={{ fontFamily: "JetBrains Mono, monospace" }}>
                     <Linkedin className="w-3.5 h-3.5" /> LinkedIn
                   </a>
-                  <a href={`mailto:${f.email}`} className="flex items-center gap-1.5 text-xs text-white/40 hover:text-[#E8B800] transition-colors cursor-pointer" style={{ fontFamily: "JetBrains Mono, monospace" }}>
+                  <a href={`https://mail.google.com/mail/?view=cm&fs=1&to=${f.email}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 text-xs text-white/40 hover:text-[#E8B800] transition-colors cursor-pointer" style={{ fontFamily: "JetBrains Mono, monospace" }}>
                     <Mail className="w-3.5 h-3.5" /> Email
                   </a>
                 </div>
@@ -744,7 +751,15 @@ function CareersPage() {
 function ContactPage() {
   const [form, setForm] = useState({ name: "", email: "", company: "", message: "" });
   const [sent, setSent] = useState(false);
-  const handleSubmit = (e: React.FormEvent) => { e.preventDefault(); setSent(true); };
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    // Create email body with form data
+    const subject = encodeURIComponent(`New Message from ${form.name} - ${form.company}`);
+    const body = encodeURIComponent(`Name: ${form.name}\nEmail: ${form.email}\nCompany: ${form.company}\n\nMessage:\n${form.message}`);
+    // Open user's default email client
+    window.location.href = `mailto:skyvonyx@gmail.com?subject=${subject}&body=${body}`;
+    setSent(true);
+  };
   return (
     <div className="pt-28 max-w-7xl mx-auto px-6 pb-20">
       <div className="text-center mb-14">
@@ -768,10 +783,11 @@ function ContactPage() {
           ) : (
             <form onSubmit={handleSubmit} className="space-y-5">
               <h3 className="text-white font-bold text-xl mb-6" style={{ fontFamily: "Orbitron, monospace" }}>Send a Message</h3>
+              <h6 className="text-white font-bold text-x6 mb-6" style={{ fontFamily: "Orbitron, monospace" }}>(You will be redirected to mail once "SEND MESSAGE" is clicked.)</h6>
               {[
-                { label: "Your Name", field: "name", type: "text", placeholder: "John Smith" },
-                { label: "Email Address", field: "email", type: "email", placeholder: "john@company.com" },
-                { label: "Company", field: "company", type: "text", placeholder: "Acme Corp" },
+                { label: "Your Name", field: "name", type: "text", placeholder: "ex: John Smith" },
+                { label: "Email Address", field: "email", type: "email", placeholder: "ex: john@company.com" },
+                { label: "Company", field: "company", type: "text", placeholder: "ex: ABC Corp" },
               ].map(({ label, field, type, placeholder }) => (
                 <div key={field}>
                   <label className="block text-xs text-white/50 tracking-widest uppercase mb-1.5" style={{ fontFamily: "JetBrains Mono, monospace" }}>{label}</label>
@@ -798,19 +814,23 @@ function ContactPage() {
             <h4 className="text-white font-bold mb-4" style={{ fontFamily: "Rajdhani, sans-serif" }}>Direct Contact</h4>
             <div className="space-y-4">
               {[
-                { icon: Mail, label: "Harish Raj (Founder)", value: "harishrajb2007@gmail.com" },
-                { icon: Mail, label: "Ganesh Gitaka (Co-Founder)", value: "ganesh.gitaka@gmail.com"},
-                { icon: Mail, label: "skyvonyx", value: "skyvonyx@gmail.com" },
-                { icon: Linkedin, label: "LinkedIn", value: "linkedin.com/company/skyvonyx" },
-                { icon: MapPin, label: "Location", value: "Global — Remote First" },
-              ].map(({ icon: Icon, label, value }, i) => (
+                { icon: Mail, label: "Harish Raj (Founder)", value: "harishrajb2007@gmail.com", href: "https://mail.google.com/mail/?view=cm&fs=1&to=harishrajb2007@gmail.com" },
+                { icon: Mail, label: "Ganesh Gitaka (Co-Founder)", value: "ganesh.gitaka@gmail.com", href: "https://mail.google.com/mail/?view=cm&fs=1&to=ganesh.gitaka@gmail.com" },
+                { icon: Mail, label: "skyvonyx", value: "skyvonyx@gmail.com", href: "https://mail.google.com/mail/?view=cm&fs=1&to=skyvonyx@gmail.com" },
+                { icon: Linkedin, label: "LinkedIn", value: "linkedin.com/company/skyvonyx", href: "https://linkedin.com/company/skyvonyx" },
+                { icon: MapPin, label: "Location", value: "Global — Remote First", href: "" },
+              ].map(({ icon: Icon, label, value, href }, i) => (
                 <div key={i} className="flex items-start gap-3">
                   <div className="w-8 h-8 rounded-lg bg-[#E8B800]/10 flex items-center justify-center flex-shrink-0 mt-0.5">
                     <Icon className="w-4 h-4 text-[#E8B800]" />
                   </div>
                   <div>
                     <div className="text-white/40 text-xs mb-0.5" style={{ fontFamily: "JetBrains Mono, monospace" }}>{label}</div>
-                    <div className="text-white/80 text-sm" style={{ fontFamily: "Inter, sans-serif" }}>{value}</div>
+                    {href ? (
+                      <a href={href} target="_blank" rel="noopener noreferrer" className="text-white/80 hover:text-[#E8B800] text-sm transition-colors cursor-pointer" style={{ fontFamily: "Inter, sans-serif" }}>{value}</a>
+                    ) : (
+                      <div className="text-white/80 text-sm" style={{ fontFamily: "Inter, sans-serif" }}>{value}</div>
+                    )}
                   </div>
                 </div>
               ))}
