@@ -859,6 +859,22 @@ export default function App() {
   const [page, setPage] = useState<Page>("home");
   const mainRef = useRef<HTMLDivElement>(null);
 
+  // Add Google AdSense script to head
+  useEffect(() => {
+    const script = document.createElement("script");
+    script.src = "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4857877397305724";
+    script.async = true;
+    script.crossOrigin = "anonymous";
+    document.head.appendChild(script);
+
+    return () => {
+      // Cleanup: remove script when component unmounts
+      if (document.head.contains(script)) {
+        document.head.removeChild(script);
+      }
+    };
+  }, []);
+
   const navigate = (p: Page) => {
     setPage(p);
     mainRef.current?.scrollTo({ top: 0, behavior: "smooth" });
