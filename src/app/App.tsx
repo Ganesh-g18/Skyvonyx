@@ -859,20 +859,17 @@ export default function App() {
   const [page, setPage] = useState<Page>("home");
   const mainRef = useRef<HTMLDivElement>(null);
 
-  // Add Google AdSense script to head
+  // Add Google AdSense script to head section - loads once globally
   useEffect(() => {
+    // Check if script already exists to prevent duplicates
+    const existingScript = document.querySelector('script[src*="adsbygoogle.js"]');
+    if (existingScript) return;
+
     const script = document.createElement("script");
     script.src = "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4857877397305724";
     script.async = true;
     script.crossOrigin = "anonymous";
     document.head.appendChild(script);
-
-    return () => {
-      // Cleanup: remove script when component unmounts
-      if (document.head.contains(script)) {
-        document.head.removeChild(script);
-      }
-    };
   }, []);
 
   const navigate = (p: Page) => {
