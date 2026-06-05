@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "motion/react";
+import { Helmet, HelmetProvider } from "react-helmet-async";
 import { ImageWithFallback } from "@/app/components/figma/ImageWithFallback";
 import logoSrc from "@/imports/ChatGPT_Image_wode_Dec_19__2025__11_54_21_PM__2_-removebg-preview.png";
 import {
@@ -859,19 +860,6 @@ export default function App() {
   const [page, setPage] = useState<Page>("home");
   const mainRef = useRef<HTMLDivElement>(null);
 
-  // Add Google AdSense script to head section - loads once globally
-  useEffect(() => {
-    // Check if script already exists to prevent duplicates
-    const existingScript = document.querySelector('script[src*="adsbygoogle.js"]');
-    if (existingScript) return;
-
-    const script = document.createElement("script");
-    script.src = "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4857877397305724";
-    script.async = true;
-    script.crossOrigin = "anonymous";
-    document.head.appendChild(script);
-  }, []);
-
   const navigate = (p: Page) => {
     setPage(p);
     mainRef.current?.scrollTo({ top: 0, behavior: "smooth" });
@@ -888,24 +876,29 @@ export default function App() {
   };
 
   return (
-    <div className="relative min-h-screen bg-[#050505] overflow-x-hidden" style={{ scrollbarWidth: "thin", scrollbarColor: "rgba(232,184,0,0.2) transparent" }}>
-      <StarField />
-      <Navbar activePage={page} setPage={navigate} />
-      <main ref={mainRef}>
-        <AnimatePresence mode="wait">
-          <motion.div key={page} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.35 }}>
-            {pageComponents[page]}
-          </motion.div>
-        </AnimatePresence>
-        <Footer setPage={navigate} />
-      </main>
-      {/* Page nav dots */}
-      <div className="fixed right-5 top-1/2 -translate-y-1/2 z-40 flex flex-col gap-2.5 hidden xl:flex">
-        {(["home", "about", "technology", "team", "careers", "contact"] as Page[]).map(p => (
-          <button key={p} onClick={() => navigate(p)} title={p}
-            className={`w-2 h-2 rounded-full transition-all cursor-pointer ${page === p ? "bg-[#E8B800] shadow-[0_0_8px_rgba(232,184,0,0.8)]" : "bg-white/15 hover:bg-white/40"}`} />
-        ))}
+    <HelmetProvider>
+      <Helmet>
+        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4857877397305724" crossorigin="anonymous"></script>
+      </Helmet>
+      <div className="relative min-h-screen bg-[#050505] overflow-x-hidden" style={{ scrollbarWidth: "thin", scrollbarColor: "rgba(232,184,0,0.2) transparent" }}>
+        <StarField />
+        <Navbar activePage={page} setPage={navigate} />
+        <main ref={mainRef}>
+          <AnimatePresence mode="wait">
+            <motion.div key={page} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.35 }}>
+              {pageComponents[page]}
+            </motion.div>
+          </AnimatePresence>
+          <Footer setPage={navigate} />
+        </main>
+        {/* Page nav dots */}
+        <div className="fixed right-5 top-1/2 -translate-y-1/2 z-40 flex flex-col gap-2.5 hidden xl:flex">
+          {(["home", "about", "technology", "team", "careers", "contact"] as Page[]).map(p => (
+            <button key={p} onClick={() => navigate(p)} title={p}
+              className={`w-2 h-2 rounded-full transition-all cursor-pointer ${page === p ? "bg-[#E8B800] shadow-[0_0_8px_rgba(232,184,0,0.8)]" : "bg-white/15 hover:bg-white/40"}`} />
+          ))}
+        </div>
       </div>
-    </div>
+    </HelmetProvider>
   );
 }
